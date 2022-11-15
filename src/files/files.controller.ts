@@ -10,11 +10,13 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
+import { Auth } from 'src/auth/decorators';
 import { FilesService } from './files.service';
 import { fileFilter, fileNamer } from './helpers';
-
+@ApiTags('Files')
 @Controller('files')
 export class FilesController {
   constructor(
@@ -29,7 +31,9 @@ export class FilesController {
     res.sendFile(path);
   }
 
+  @ApiBearerAuth()
   @Post('product')
+  @Auth()
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: fileFilter,
