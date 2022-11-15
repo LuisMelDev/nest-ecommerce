@@ -12,6 +12,7 @@ import { DataSource, Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductImage, Product } from './entities';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -27,7 +28,7 @@ export class ProductsService {
 
   private readonly logger = new Logger('ProductService');
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
     try {
       const { images = [], ...productProps } = createProductDto;
 
@@ -36,6 +37,7 @@ export class ProductsService {
         images: images.map((url) =>
           this.productImageRepository.create({ url }),
         ),
+        user,
       });
       await this.productRepository.save(newProduct);
       return newProduct;
